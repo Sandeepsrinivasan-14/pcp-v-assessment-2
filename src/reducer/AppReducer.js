@@ -6,6 +6,9 @@ export const AppReducer = (state, action) => {
     case 'SET_ERROR':
       return { ...state, error: action.payload, loading: false };
 
+    case 'ADD_ORDER':
+      return { ...state, orders: [action.payload, ...state.orders] };
+
     case 'UPDATE_ORDER_STATUS':
       return {
         ...state,
@@ -13,6 +16,9 @@ export const AppReducer = (state, action) => {
           o.orderId === action.payload.orderId ? { ...o, status: action.payload.status } : o
         ),
       };
+
+    case 'DELETE_ORDER':
+      return { ...state, orders: state.orders.filter(o => o.orderId !== action.payload) };
 
     case 'SET_FILTER':
       return { ...state, filteredRestaurant: action.payload };

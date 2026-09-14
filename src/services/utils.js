@@ -36,6 +36,26 @@ export const filterOrdersByRestaurant = (orders, restaurantName) => {
   );
 };
 
+export const exportOrdersToCSV = (orders) => {
+  const headers = ['Order ID', 'Customer', 'Restaurant', 'Status', 'Total Amount', 'Items', 'Rating', 'Delivery Time'];
+  const rows = orders.map(o => [
+    o.orderId,
+    o.customerName || '',
+    o.restaurant || '',
+    o.status || '',
+    o.totalAmount || 0,
+    (o.items || []).map(i => `${i.name}x${i.quantity}`).join('; '),
+    o.rating || '',
+    o.deliveryTime || '',
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `fooddash-orders-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+};
+
 export const getOrderStats = (orders) => {
   const validOrders = getValidOrders(orders);
 
